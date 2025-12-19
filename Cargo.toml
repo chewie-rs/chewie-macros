@@ -1,0 +1,28 @@
+[package]
+name = "chewie-macros"
+version = "0.1.0"
+edition = "2021"
+description = "Procedural macros for chewie-auth ecosystem"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/chewie-rs/chewie-macros"
+documentation = "https://docs.rs/chewie-macros"
+homepage = "https://github.com/chewie-rs/chewie-macros"
+keywords = ["macros", "oauth2", "oidc", "crypto"]
+categories = ["authentication", "web-programming"]
+readme = "README.md"
+rust-version = "1.77"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1"
+quote = "1"
+syn = "2"
+
+[features]
+# Controls Send + Sync bounds in generated code (set by build.rs based on target)
+send = []
+
+[dev-dependencies]
+macrotest = "1.2.0"
