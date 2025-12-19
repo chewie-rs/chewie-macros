@@ -87,7 +87,7 @@ pub fn define_boxed_error_impl(input: TokenStream) -> TokenStream {
 
     let display_msg = display.value();
 
-    // Generate the struct definition with conditional inner type
+    // Generate the struct definition with conditional source type
     let struct_def = if let Some(path) = box_error_path {
         // User specified a custom type
         quote! {
@@ -95,7 +95,7 @@ pub fn define_boxed_error_impl(input: TokenStream) -> TokenStream {
             #[derive(Debug)]
             #[non_exhaustive]
             #vis struct #name {
-                inner: #path,
+                source: #path,
             }
         }
     } else {
@@ -107,9 +107,9 @@ pub fn define_boxed_error_impl(input: TokenStream) -> TokenStream {
             #[allow(unexpected_cfgs)]
             #vis struct #name {
                 #[cfg(feature = "send")]
-                inner: Box<dyn std::error::Error + Send + Sync>,
+                source: Box<dyn std::error::Error + Send + Sync>,
                 #[cfg(not(feature = "send"))]
-                inner: Box<dyn std::error::Error>,
+                source: Box<dyn std::error::Error>,
             }
         }
     };
@@ -119,13 +119,13 @@ pub fn define_boxed_error_impl(input: TokenStream) -> TokenStream {
 
         impl std::fmt::Display for #name {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                write!(f, "{}: {}", #display_msg, self.inner)
+                write!(f, "{}: {}", #display_msg, self.source)
             }
         }
 
         impl std::error::Error for #name {
             fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
-                Some(self.inner.as_ref())
+                Some(self.source.as_ref())
             }
         }
 
@@ -134,7 +134,7 @@ pub fn define_boxed_error_impl(input: TokenStream) -> TokenStream {
             /// Attempts to downcast the error to a concrete type.
             #[must_use]
             pub fn downcast_ref<E: std::error::Error + 'static>(&self) -> Option<&E> {
-                self.inner.downcast_ref::<E>()
+                self.source.downcast_ref::<E>()
             }
 
             /// Consumes the error and attempts to downcast to a concrete type.
@@ -142,24 +142,24 @@ pub fn define_boxed_error_impl(input: TokenStream) -> TokenStream {
             /// # Errors
             /// Returns the original error if the downcast fails.
             pub fn downcast<E: std::error::Error + 'static>(self) -> ::core::result::Result<E, Self> {
-                self.inner
+                self.source
                     .downcast::<E>()
                     .map(|boxed| *boxed)
-                    .map_err(|inner| #name { inner })
+                    .map_err(|source| #name { source })
             }
 
-            /// Returns a reference to the underlying error.
+            /// Returns a reference to the underlying error with full bounds.
             #[must_use]
             #[cfg(feature = "send")]
             pub fn inner(&self) -> &(dyn std::error::Error + Send + Sync + 'static) {
-                self.inner.as_ref()
+                self.source.as_ref()
             }
 
             /// Returns a reference to the underlying error.
             #[must_use]
             #[cfg(not(feature = "send"))]
             pub fn inner(&self) -> &(dyn std::error::Error + 'static) {
-                self.inner.as_ref()
+                self.source.as_ref()
             }
         }
     };

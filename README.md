@@ -42,7 +42,7 @@ define_boxed_error! {
 // Create from any error type
 fn validate_token(token: &str) -> Result<(), TokenError> {
     let parsed: serde_json::Value = serde_json::from_str(token)
-        .map_err(|e| TokenError { inner: Box::new(e) })?;
+        .map_err(|e| TokenError { source: Box::new(e) })?;
     Ok(())
 }
 
