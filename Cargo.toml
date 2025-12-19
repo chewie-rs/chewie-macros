@@ -5,10 +5,6 @@ edition = "2024"
 description = "Procedural macros for chewie-auth ecosystem"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/chewie-rs/chewie-macros"
-documentation = "https://docs.rs/chewie-macros"
-homepage = "https://github.com/chewie-rs/chewie-macros"
-keywords = ["macros", "oauth2", "oidc", "crypto"]
-categories = ["authentication", "web-programming"]
 readme = "README.md"
 rust-version = "1.88"
 
