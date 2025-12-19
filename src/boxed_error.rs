@@ -151,14 +151,14 @@ pub fn define_boxed_error_impl(input: TokenStream) -> TokenStream {
             /// Returns a reference to the underlying error.
             #[must_use]
             #[cfg(feature = "send")]
-            pub fn inner(&self) -> &(dyn std::error::Error + Send + Sync) {
+            pub fn inner(&self) -> &(dyn std::error::Error + Send + Sync + 'static) {
                 self.inner.as_ref()
             }
 
             /// Returns a reference to the underlying error.
             #[must_use]
             #[cfg(not(feature = "send"))]
-            pub fn inner(&self) -> &dyn std::error::Error {
+            pub fn inner(&self) -> &(dyn std::error::Error + 'static) {
                 self.inner.as_ref()
             }
         }

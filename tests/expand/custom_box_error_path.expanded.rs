@@ -47,7 +47,7 @@ impl CustomPathError {
     }
     /// Returns a reference to the underlying error.
     #[must_use]
-    pub fn inner(&self) -> &dyn std::error::Error {
+    pub fn inner(&self) -> &(dyn std::error::Error + 'static) {
         self.inner.as_ref()
     }
 }
