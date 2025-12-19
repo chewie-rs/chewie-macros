@@ -3,8 +3,8 @@
 use proc_macro::TokenStream;
 use quote::quote;
 use syn::{
-    parse::{Parse, ParseStream},
     Attribute, Ident, LitStr, Path, Result, Token, Visibility,
+    parse::{Parse, ParseStream},
 };
 
 /// Input for the `define_boxed_error!` macro.
